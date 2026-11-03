@@ -21,7 +21,13 @@ Item {
   property string filterText: ""
   property int selectedIndex: 0
   property bool cursorActive: false
-  property var symbols: []
+  property int tabIndex: 0
+  property var datasets: [[], [], []]
+  readonly property var tabs: [
+    { label: "Symbols", file: Qt.resolvedUrl("symbols.json") },
+    { label: "Icons", file: Qt.resolvedUrl("icons.json") },
+    { label: "Emojis", file: "file://" + omarchyPath + "/shell/plugins/emojis/emojis.json" }
+  ]
 
   // Shares the [menu] surface tokens — themes that style the menu also
   // style symbols. Selected-cell colors composed in the
@@ -36,6 +42,7 @@ Item {
   readonly property int cornerRadius: Style.cornerRadius
   property string fontFamily: Style.font.menuFamily
   property int contentMargin: Style.spacing.panelPadding
+  property int tabBarHeight: Math.max(Style.space(30), Style.font.title + Style.spacing.controlPaddingY * 2)
   property int headerHeight: Math.max(Style.space(34), Style.font.title + Style.spacing.controlPaddingY * 2)
   property int contentSpacing: Style.spacing.md
   property int cardWidth: Math.min(Style.space(400), panel.width - Style.gapsOut * 2)
@@ -71,17 +78,19 @@ Item {
     else root.open("{}")
   }
 
-  function loadSymbols(raw) {
-    root.symbols = SymbolSearch.parseSymbols(raw)
+  function loadDataset(index, raw) {
+    var next = root.datasets.slice()
+    next[index] = SymbolSearch.parseSymbols(raw)
+    root.datasets = next
     if (root.opened) root.rebuildDisplay()
   }
 
   function rebuildDisplay() {
-    var out = SymbolSearch.filterSymbols(root.symbols, root.filterText, 1000)
+    var out = SymbolSearch.filterSymbols(root.datasets[root.tabIndex], root.filterText, 1000)
 
     displayModel.clear()
     for (var j = 0; j < out.length; j++) {
-      displayModel.append({ symbol: out[j].e, shown: root.visibleForm(out[j].e), name: out[j].n, category: out[j].c, index: j })
+      displayModel.append({ symbol: out[j].e, shown: root.visibleForm(out[j].e), name: out[j].n || out[j].k, category: out[j].c || "", index: j })
     }
 
     if (displayModel.count === 0) selectedIndex = 0
@@ -92,6 +101,16 @@ Item {
     Qt.callLater(function() {
       if (displayModel.count > 0) resultGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain)
     })
+  }
+
+  function switchTab(delta) {
+    root.tabIndex = (root.tabIndex + delta + root.tabs.length) % root.tabs.length
+    root.setFilter(root.filterText)
+  }
+
+  function pickTab(index) {
+    root.tabIndex = index
+    root.setFilter(root.filterText)
   }
 
   // Blank and zero-width symbols would render as an empty cell.
@@ -215,9 +234,18 @@ Item {
 
   ListModel { id: displayModel }
 
-  FileView {
-    path: Qt.resolvedUrl("symbols.json")
-    onLoaded: root.loadSymbols(text())
+  Repeater {
+    model: root.tabs.length
+
+    Item {
+      id: source
+      required property int index
+
+      FileView {
+        path: root.tabs[source.index].file
+        onLoaded: root.loadDataset(source.index, text())
+      }
+    }
   }
 
   FileView {
@@ -266,7 +294,13 @@ Item {
 
         Keys.priority: Keys.BeforeItem
         Keys.onPressed: function(event) {
-          if (event.key === Qt.Key_Escape) {
+          if (event.key === Qt.Key_Tab) {
+            root.switchTab(1)
+            event.accepted = true
+          } else if (event.key === Qt.Key_Backtab) {
+            root.switchTab(-1)
+            event.accepted = true
+          } else if (event.key === Qt.Key_Escape) {
             if (root.filterText) root.setFilter("")
             else root.dismiss()
             event.accepted = true
@@ -310,6 +344,19 @@ Item {
         anchors.leftMargin: card.contentLeftInset
         spacing: root.contentSpacing
 
+        TabBar {
+          width: parent.width
+          height: root.tabBarHeight
+          labels: root.tabs.map(function(t) { return t.label })
+          current: root.tabIndex
+          foreground: root.foreground
+          selectedBackground: root.selectedBackground
+          selectedText: root.selectedText
+          fontFamily: root.fontFamily
+          cornerRadius: root.cornerRadius
+          onPicked: function(index) { root.pickTab(index) }
+        }
+
         Rectangle {
           width: parent.width
           height: root.headerHeight
@@ -321,7 +368,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            text: root.filterText || "Search symbols…"
+            text: root.filterText || "Search " + root.tabs[root.tabIndex].label.toLowerCase() + "…"
             color: root.foreground
             opacity: root.filterText ? 1 : 0.58
             font.family: root.fontFamily
@@ -332,7 +379,7 @@ Item {
 
         Item {
           width: parent.width
-          height: parent.height - root.headerHeight - root.footerHeight - root.contentSpacing * 2
+          height: parent.height - root.tabBarHeight - root.headerHeight - root.footerHeight - root.contentSpacing * 3
 
           GridView {
             id: resultGrid
@@ -421,7 +468,7 @@ Item {
           width: parent.width
           height: root.footerHeight
           verticalAlignment: Text.AlignVCenter
-          text: root.selectedRow ? root.selectedRow.name + "  ·  " + root.selectedRow.category : "Enter inserts the selected symbol"
+          text: root.selectedRow ? root.selectedRow.category ? root.selectedRow.name + "  ·  " + root.selectedRow.category : root.selectedRow.name : "Tab switches tabs"
           color: root.foreground
           opacity: 0.7
           font.family: root.fontFamily

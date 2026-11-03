@@ -3,6 +3,10 @@
 An [Omarchy](https://omarchy.org) overlay for typing the symbols that aren't on
 your keyboard: the euro sign, accented letters, math, arrows, quotes and more.
 
+It has three tabs, switched with Tab and Shift+Tab (or a click): Symbols, Nerd
+Font icons, and emojis. The search text carries over when you switch tabs. The
+icon list is bundled; emojis are read from Omarchy's own emoji plugin.
+
 Type a few keywords, arrow to the symbol you want, press Enter, and it's
 inserted into whatever was focused.
 
@@ -28,7 +32,7 @@ only does this if that key isn't already there, so hand edits stick.
 Prefer a keybinding (`~/.config/hypr/bindings.lua`)?
 
 ```lua
-o.bind(hyper .. "S", "Symbols", "omarchy-shell shell toggle jeffrey.symbols")
+o.bind("SUPER + COMMA", "Symbols, icons and emojis", "omarchy-shell shell toggle jeffrey.symbols")
 ```
 
 ## Search
