@@ -13,7 +13,7 @@ inserted into whatever was focused.
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/CornillieJ/omarchy-symbol-picker.git --enable
+omarchy plugin add https://github.com/CornillieJ/omarchy-glyphs.git --enable
 ```
 
 ## Remove
