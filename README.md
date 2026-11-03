@@ -24,12 +24,20 @@ omarchy plugin remove jeffrey.glyphs
 
 ## Use
 
-Enabling the plugin adds a "Special Characters" entry to the Omarchy menu automatically,
-by adding a `trigger.glyphs` row to
-`~/.config/omarchy/extensions/omarchy-menu.jsonc` the first time it loads. It
-only does this if that key isn't already there, so hand edits stick.
+The plugin never edits your config. To get a menu entry, add this row to
+`~/.config/omarchy/extensions/omarchy-menu.jsonc`:
 
-Prefer a keybinding (`~/.config/hypr/bindings.lua`)?
+```jsonc
+"trigger.glyphs": {
+  "icon": "Ω",
+  "label": "Special Characters",
+  "aliases": ["glyphs", "symbols", "accents", "euro", "unicode", "icons", "emoji", "nerd font"],
+  "description": "Search and type symbols, icons, and emojis",
+  "action": "omarchy-shell shell toggle jeffrey.glyphs"
+}
+```
+
+Or bind a key (`~/.config/hypr/bindings.lua`):
 
 ```lua
 o.bind("SUPER + COMMA", "Special Characters", "omarchy-shell shell toggle jeffrey.glyphs")
@@ -44,9 +52,7 @@ o.bind("SUPER + COMMA", "Special Characters", "omarchy-shell shell toggle jeffre
 - Inserting copies the symbol to the clipboard and sends Shift+Insert to the
   focused window. The clipboard is not restored afterwards, and the copy is
   marked sensitive so clipboard history skips it.
-- On first load the plugin edits `~/.config/omarchy/extensions/omarchy-menu.jsonc`
-  once, to add its menu row. It parses the file before and after and skips the
-  write if either parse fails.
+- The plugin writes no files; the menu row and keybinding are yours to add.
 - No network access. `icons.json` is a bundled Nerd Font glyph list.
 - Regenerating `symbols.json` needs Python 3 (standard library only).
 

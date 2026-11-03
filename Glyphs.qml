@@ -15,7 +15,6 @@ Item {
   property var manifest: null
   readonly property string pluginDir: (manifest && manifest.__sourceDir) || (homePath + "/.config/omarchy/plugins/jeffrey.glyphs")
   readonly property string menuTriggerId: (manifest && manifest.id) || "jeffrey.glyphs"
-  readonly property string menuExtensionPath: homePath + "/.config/omarchy/extensions/omarchy-menu.jsonc"
 
   property bool opened: false
   property string filterText: ""
@@ -29,9 +28,7 @@ Item {
     { label: "Emojis", file: "file://" + omarchyPath + "/shell/plugins/emojis/emojis.json" }
   ]
 
-  // Shares the [menu] surface tokens — themes that style the menu also
-  // style symbols. Selected-cell colors composed in the
-  // singleton so consumers drop them straight into Rectangle bindings.
+  // Shares the [menu] surface tokens, so themes that style the menu style this too.
   property color background: Color.menu.background
   property color foreground: Color.menu.text
   property color border: Color.menu.border
@@ -101,6 +98,12 @@ Item {
     Qt.callLater(function() {
       if (displayModel.count > 0) resultGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain)
     })
+  }
+
+  function footerText() {
+    var row = root.selectedRow
+    if (!row) return "Tab switches tabs"
+    return row.category ? row.name + "  ·  " + row.category : row.name
   }
 
   function switchTab(delta) {
@@ -179,59 +182,6 @@ Item {
     Quickshell.execDetached([root.pluginDir + "/insert.sh", symbol])
   }
 
-  // Mirrors the shell's own comment/trailing-comma stripping (see
-  // MenuModel.js) so the parse check below sees exactly what the menu itself
-  // will see.
-  function stripJsonc(raw) {
-    return String(raw || "")
-      .replace(/^\s*\/\/[^\n]*(\n|$)/gm, "")
-      .replace(/,(\s*[}\]])/g, "$1")
-  }
-
-  // Adds the "trigger.glyphs" row from the README to the user's menu
-  // extension file the first time this overlay loads (keepLoaded means
-  // that's as soon as the plugin is enabled), so it shows up without anyone
-  // hand-editing JSONC. No-ops if the key is already there (installed
-  // before, or added by hand) or if the file doesn't round-trip through
-  // JSON.parse before and after the edit, so an enable can never corrupt an
-  // existing menu customization.
-  function installMenuTrigger(raw) {
-    var key = "\"trigger.glyphs\""
-    if (raw.indexOf(key) !== -1) return
-
-    var trimmed = raw.replace(/\s+$/, "")
-    if (trimmed.charAt(trimmed.length - 1) !== "}") return
-
-    var existing
-    try {
-      existing = JSON.parse(root.stripJsonc(raw))
-    } catch (e) {
-      return
-    }
-    var hasEntries = existing && typeof existing === "object" && Object.keys(existing).length > 0
-
-    var head = trimmed.slice(0, trimmed.length - 1)
-    var block =
-      "  \"trigger.glyphs\": {\n" +
-      "    \"icon\": \"Ω\",\n" +
-      "    \"label\": \"Special Characters\",\n" +
-      "    \"aliases\": [\"glyphs\", \"glyph\", \"symbols\", \"symbol\", \"accents\", \"euro\", \"unicode\", \"icons\", \"emoji\", \"emojis\", \"nerd font\"],\n" +
-      "    \"description\": \"Search and type symbols, icons, and emojis (SUPER + ,)\",\n" +
-      "    \"action\": \"omarchy-shell shell toggle " + root.menuTriggerId + "\"\n" +
-      "  }\n"
-    var newText = head + (hasEntries ? ",\n" : "\n") + block + "}\n"
-
-    var after
-    try {
-      after = JSON.parse(root.stripJsonc(newText))
-    } catch (e) {
-      return
-    }
-    if (!after || !after["trigger.glyphs"]) return
-
-    menuExtensionFile.setText(newText)
-  }
-
   ListModel { id: displayModel }
 
   Repeater {
@@ -248,13 +198,6 @@ Item {
     }
   }
 
-  FileView {
-    id: menuExtensionFile
-    path: root.menuExtensionPath
-    preload: true
-    printErrors: false
-    onLoaded: root.installMenuTrigger(text())
-  }
   PanelWindow {
     id: panel
     visible: root.opened
@@ -468,7 +411,7 @@ Item {
           width: parent.width
           height: root.footerHeight
           verticalAlignment: Text.AlignVCenter
-          text: root.selectedRow ? root.selectedRow.category ? root.selectedRow.name + "  ·  " + root.selectedRow.category : root.selectedRow.name : "Tab switches tabs"
+          text: root.footerText()
           color: root.foreground
           opacity: 0.7
           font.family: root.fontFamily
