@@ -32,7 +32,7 @@ only does this if that key isn't already there, so hand edits stick.
 Prefer a keybinding (`~/.config/hypr/bindings.lua`)?
 
 ```lua
-o.bind("SUPER + COMMA", "Symbols, icons and emojis", "omarchy-shell shell toggle jeffrey.glyphs")
+o.bind("SUPER + COMMA", "Special Characters", "omarchy-shell shell toggle jeffrey.glyphs")
 ```
 
 ## Search
