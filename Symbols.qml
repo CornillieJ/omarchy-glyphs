@@ -215,8 +215,8 @@ Item {
       "  \"trigger.symbols\": {\n" +
       "    \"icon\": \"Ω\",\n" +
       "    \"label\": \"Symbols\",\n" +
-      "    \"aliases\": [\"symbols\", \"symbol\", \"special characters\", \"accents\", \"euro\", \"unicode\"],\n" +
-      "    \"description\": \"Search and type symbols, accents, and currency signs\",\n" +
+      "    \"aliases\": [\"symbols\", \"symbol\", \"special characters\", \"accents\", \"euro\", \"unicode\", \"icons\", \"emoji\", \"emojis\", \"nerd font\"],\n" +
+      "    \"description\": \"Search and type symbols, icons, and emojis (SUPER + ,)\",\n" +
       "    \"action\": \"omarchy-shell shell toggle " + root.menuTriggerId + "\"\n" +
       "  }\n"
     var newText = head + (hasEntries ? ",\n" : "\n") + block + "}\n"
