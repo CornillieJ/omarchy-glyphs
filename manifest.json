@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "jeffrey.symbols",
+  "name": "Symbols",
+  "version": "1.0.0",
+  "author": "Jeffrey Cornillie",
+  "description": "Searchable picker for symbols missing on your keyboard: euro and currency signs, accented letters, math, arrows and more, typed straight into the focused app",
+  "kinds": [
+    "overlay"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "Symbols.qml"
+  }
+}
