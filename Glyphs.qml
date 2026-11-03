@@ -13,8 +13,8 @@ Item {
   property string homePath: Quickshell.env("HOME")
   property var shell: null
   property var manifest: null
-  readonly property string pluginDir: (manifest && manifest.__sourceDir) || (homePath + "/.config/omarchy/plugins/jeffrey.symbols")
-  readonly property string menuTriggerId: (manifest && manifest.id) || "jeffrey.symbols"
+  readonly property string pluginDir: (manifest && manifest.__sourceDir) || (homePath + "/.config/omarchy/plugins/jeffrey.glyphs")
+  readonly property string menuTriggerId: (manifest && manifest.id) || "jeffrey.glyphs"
   readonly property string menuExtensionPath: homePath + "/.config/omarchy/extensions/omarchy-menu.jsonc"
 
   property bool opened: false
@@ -188,7 +188,7 @@ Item {
       .replace(/,(\s*[}\]])/g, "$1")
   }
 
-  // Adds the "trigger.symbols" row from the README to the user's menu
+  // Adds the "trigger.glyphs" row from the README to the user's menu
   // extension file the first time this overlay loads (keepLoaded means
   // that's as soon as the plugin is enabled), so it shows up without anyone
   // hand-editing JSONC. No-ops if the key is already there (installed
@@ -196,7 +196,7 @@ Item {
   // JSON.parse before and after the edit, so an enable can never corrupt an
   // existing menu customization.
   function installMenuTrigger(raw) {
-    var key = "\"trigger.symbols\""
+    var key = "\"trigger.glyphs\""
     if (raw.indexOf(key) !== -1) return
 
     var trimmed = raw.replace(/\s+$/, "")
@@ -212,10 +212,10 @@ Item {
 
     var head = trimmed.slice(0, trimmed.length - 1)
     var block =
-      "  \"trigger.symbols\": {\n" +
+      "  \"trigger.glyphs\": {\n" +
       "    \"icon\": \"Ω\",\n" +
-      "    \"label\": \"Symbols\",\n" +
-      "    \"aliases\": [\"symbols\", \"symbol\", \"special characters\", \"accents\", \"euro\", \"unicode\", \"icons\", \"emoji\", \"emojis\", \"nerd font\"],\n" +
+      "    \"label\": \"Special Characters\",\n" +
+      "    \"aliases\": [\"glyphs\", \"glyph\", \"symbols\", \"symbol\", \"accents\", \"euro\", \"unicode\", \"icons\", \"emoji\", \"emojis\", \"nerd font\"],\n" +
       "    \"description\": \"Search and type symbols, icons, and emojis (SUPER + ,)\",\n" +
       "    \"action\": \"omarchy-shell shell toggle " + root.menuTriggerId + "\"\n" +
       "  }\n"
@@ -227,7 +227,7 @@ Item {
     } catch (e) {
       return
     }
-    if (!after || !after["trigger.symbols"]) return
+    if (!after || !after["trigger.glyphs"]) return
 
     menuExtensionFile.setText(newText)
   }
@@ -260,7 +260,7 @@ Item {
     visible: root.opened
     anchors { top: true; bottom: true; left: true; right: true }
     color: "transparent"
-    WlrLayershell.namespace: "omarchy-symbols"
+    WlrLayershell.namespace: "omarchy-glyphs"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
     exclusionMode: ExclusionMode.Ignore

@@ -1,4 +1,4 @@
-# Symbols
+# Glyphs
 
 An [Omarchy](https://omarchy.org) overlay for typing the symbols that aren't on
 your keyboard: the euro sign, accented letters, math, arrows, quotes and more.
@@ -19,20 +19,20 @@ omarchy plugin add https://github.com/CornillieJ/omarchy-symbol-picker.git --ena
 ## Remove
 
 ```bash
-omarchy plugin remove jeffrey.symbols
+omarchy plugin remove jeffrey.glyphs
 ```
 
 ## Use
 
-Enabling the plugin adds a "Symbols" entry to the Omarchy menu automatically,
-by adding a `trigger.symbols` row to
+Enabling the plugin adds a "Special Characters" entry to the Omarchy menu automatically,
+by adding a `trigger.glyphs` row to
 `~/.config/omarchy/extensions/omarchy-menu.jsonc` the first time it loads. It
 only does this if that key isn't already there, so hand edits stick.
 
 Prefer a keybinding (`~/.config/hypr/bindings.lua`)?
 
 ```lua
-o.bind("SUPER + COMMA", "Symbols, icons and emojis", "omarchy-shell shell toggle jeffrey.symbols")
+o.bind("SUPER + COMMA", "Symbols, icons and emojis", "omarchy-shell shell toggle jeffrey.glyphs")
 ```
 
 ## Search

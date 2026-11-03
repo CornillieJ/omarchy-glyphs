@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "jeffrey.symbols",
-  "name": "Symbols",
+  "id": "jeffrey.glyphs",
+  "name": "Glyphs",
   "version": "1.0.0",
   "author": "Jeffrey Cornillie",
   "description": "Tabbed picker for symbols, Nerd Font icons and emojis: euro and currency signs, accented letters, math, arrows and more, typed straight into the focused app",
@@ -10,6 +10,6 @@
   ],
   "keepLoaded": true,
   "entryPoints": {
-    "overlay": "Symbols.qml"
+    "overlay": "Glyphs.qml"
   }
 }
