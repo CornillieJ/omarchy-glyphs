@@ -3,12 +3,12 @@
 # Inserts a symbol into the focused application, mirroring
 # omarchy-menu-emoji-insert's clipboard-then-paste approach.
 
-icon="${1:-}"
+symbol="${1:-}"
 copy_pid=""
 
-[[ -n $icon ]] || exit
+[[ -n $symbol ]] || exit
 
-printf '%s' "$icon" | wl-copy --type text/plain --sensitive --foreground &
+printf '%s' "$symbol" | wl-copy --type text/plain --sensitive --foreground &
 copy_pid=$!
 
 sleep 0.15

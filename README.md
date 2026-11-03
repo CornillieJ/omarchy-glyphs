@@ -35,6 +35,21 @@ Prefer a keybinding (`~/.config/hypr/bindings.lua`)?
 o.bind("SUPER + COMMA", "Special Characters", "omarchy-shell shell toggle jeffrey.glyphs")
 ```
 
+## Requirements and behavior
+
+- Omarchy with the Quickshell shell (Quattro), plus `wtype` and `wl-clipboard`
+  (both ship with Omarchy).
+- The Emojis tab reads `$OMARCHY_PATH/shell/plugins/emojis/emojis.json`, so it
+  needs Omarchy's built-in emoji plugin. The other tabs work without it.
+- Inserting copies the symbol to the clipboard and sends Shift+Insert to the
+  focused window. The clipboard is not restored afterwards, and the copy is
+  marked sensitive so clipboard history skips it.
+- On first load the plugin edits `~/.config/omarchy/extensions/omarchy-menu.jsonc`
+  once, to add its menu row. It parses the file before and after and skips the
+  write if either parse fails.
+- No network access. `icons.json` is a bundled Nerd Font glyph list.
+- Regenerating `symbols.json` needs Python 3 (standard library only).
+
 ## Search
 
 The list opens on the symbols a Dutch/English-speaking European types most
